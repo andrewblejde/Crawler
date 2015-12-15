@@ -7,7 +7,9 @@ Usage:
 ./build.sh [website] [keyword] [keyword] [limit]
 
 website: the website you want to crawl for PDF files.
+
 keyword: a keyword to look for when looking at files / links
+
 *limit: the number of websites you want to crawl
 
 *optional. Not providing a limit will crawl all pages, which might take some time.
