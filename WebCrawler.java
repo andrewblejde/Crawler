@@ -27,6 +27,7 @@ public class WebCrawler
 	private String host;
 	private String key1;
 	private String key2;
+	private String ext;
 
 	// Array list for URLs
 	private static ArrayList<String> urlList = new ArrayList<String>();
@@ -42,7 +43,7 @@ public class WebCrawler
 	private int limit;
 	private boolean hasLimit;
 
-	public WebCrawler(String domain, String key1, String key2, int limit) throws IOException
+	public WebCrawler(String domain, String key1, String key2, String ext, int limit) throws IOException
 	{	
 		// Fix domain if necessary
 		if(!domain.contains("http"))
@@ -59,6 +60,13 @@ public class WebCrawler
 		this.host = u.getHost();
 		this.key1 = key1.toLowerCase();
 		this.key2 = key2.toLowerCase();
+
+		// Check first char is a period.
+		if(!Character.toString(ext.charAt(0)).equals("."))
+		{
+			ext = "." + ext;
+		}
+		this.ext = ext;
 		this.current = 0;
 		this.total = 0;
 
@@ -109,7 +117,7 @@ public class WebCrawler
 					
 					continue;
 				}
-				else if((lower.contains(this.key1) || lower.contains(this.key2)) && lower.contains(".pdf"))
+				else if((lower.contains(this.key1) || lower.contains(this.key2)) && lower.contains(this.ext))
 				{
 					FileWriter fw = new FileWriter("papers.txt", true);
 					fw.write(link);
@@ -226,19 +234,20 @@ public class WebCrawler
 	public static void main(String[] args) throws IOException
 	{
 		// If arguments given is unsatisfactory, print usage.
-		if(args == null || args.length < 3 || args.length > 4)
+		if(args == null || args.length < 4 || args.length > 5)
 		{
 			// Issue with the provided input..
 			System.out.println("Input format error.\n");
 
 			// Print usage + example
-			System.out.println("\nUsage: ./build.sh [domain] [keyword] [keyword] [limit]");
+			System.out.println("\nUsage: ./build.sh [domain] [keyword] [keyword] [extension] [limit]");
 			System.out.println("\nDomain: web address you want to to crawl.");
 			System.out.println("Keyword: a keyword that identifies your class.");
 			System.out.println("Keyword: another keyword that identifies your class.");
+			System.out.println("Extension: type of file to grab.");
 			System.out.println("Limit: (optional) maximum number of URLs you want to crawl.");
 			System.out.println("Note: If no limit is given, it will crawl all URLs it can reach #BFS.");
-			System.out.println("\nE.g.: ./build.sh http://math.purdue.edu Math265 MA265 10000\n");
+			System.out.println("\nE.g.: ./build.sh http://math.purdue.edu Math265 MA265 .pdf 10000\n");
 			System.exit(0);
 		}
 
@@ -252,7 +261,7 @@ public class WebCrawler
 		
 		try
 		{
-			limit = Integer.parseInt(args[3]);
+			limit = Integer.parseInt(args[4]);
 		}
 		catch(Exception e)
 		{
@@ -260,7 +269,7 @@ public class WebCrawler
 		}
 
 		// Call Constructor
-		crawler = new WebCrawler(args[0], args[1], args[2], limit);	
+		crawler = new WebCrawler(args[0], args[1], args[2], args[3], limit);	
 
 		// Print number of documents found
 		System.out.println("URLs found: " + crawler.getTotal() + ".\nDocuments found: " + crawler.getFound());
